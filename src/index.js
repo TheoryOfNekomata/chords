@@ -7,73 +7,146 @@ import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
 	React.createElement(App, {
-		chordDictionary: {
-			major: {
-				name: 'Major',
-				symbol: '',
-				notes: [0, 4, 7],
+		chordDictionary: [
+			{ name: 'Augmented', symbol: 'aug', notes: [0, 4, 8] },
+			{
+				name: 'Augmented eleventh',
+				symbol: '<sup>(♯11)</sup>',
+				notes: [0, 4, 7, 10, 14, 18],
 			},
-			minor: {
-				name: 'Minor',
-				symbol: 'm',
-				notes: [0, 3, 7],
+			{ name: 'Augmented major seventh', symbol: 'aug<sup>maj7</sup>', notes: [0, 4, 8, 11] },
+			{
+				name: 'Augmented seventh',
+				symbol: 'aug<sup>7</sup>',
+				notes: [0, 4, 8, 10],
 			},
-			suspended2nd: {
-				name: 'Suspended 2nd',
-				symbol: 'sus2',
-				notes: [0, 2, 7],
-			},
-			suspended4th: {
-				name: 'Suspended 4th',
-				symbol: 'sus4',
-				notes: [0, 5, 7],
-			},
-			diminished: {
+			{
 				name: 'Diminished',
 				symbol: 'dim',
 				notes: [0, 3, 6],
 			},
-			augmented: {
-				name: 'Augmented',
-				symbol: 'aug',
-				notes: [0, 4, 8],
+			{
+				name: 'Diminished major seventh',
+				symbol: 'dim<sup>maj7</sup>',
+				notes: [0, 3, 6, 11],
 			},
-			diminished7th: {
-				name: 'Diminished Seventh',
+			{
+				name: 'Diminished seventh',
 				symbol: 'dim<sup>7</sup>',
 				notes: [0, 3, 6, 9],
 			},
-			dominant7th: {
-				name: 'Dominant Seventh',
+			{
+				name: 'Dominant eleventh',
+				symbol: '<sup>11</sup>',
+				notes: [0, 4, 7, 10, 14, 17],
+			},
+			{ name: 'Dominant minor ninth', symbol: '<sup>7♭9</sup>', notes: [0, 4, 7, 10, 13] },
+			{
+				name: 'Dominant ninth',
+				symbol: '<sup>9</sup>',
+				notes: [0, 4, 7, 10, 14],
+			},
+			{
+				name: 'Dominant seventh',
 				symbol: '<sup>7</sup>',
 				notes: [0, 4, 7, 10],
 			},
-			major7th: {
-				name: 'Major Seventh',
-				symbol: '<sup>maj7</sup>',
+			{
+				name: 'Dominant seventh flat five',
+				symbol: '<sup>7♭5</sup>',
+				notes: [0, 4, 6, 10],
+			},
+			{
+				name: 'Dominant seventh sharp nine',
+				symbol: '<sup>7♯5</sup>',
+				notes: [0, 4, 7, 10, 15],
+			},
+			{ name: 'Dominant thirteenth', symbol: '<sup>13</sup>', notes: [0, 4, 7, 10, 14, 17, 21] },
+			{ name: 'Half-diminished seventh', symbol: 'm<sup>7(♭5)</sup>', notes: [0, 3, 6, 10] },
+			{
+				name: 'Major',
+				symbol: '',
+				notes: [0, 4, 7],
+			},
+			{ name: 'Major eleventh', symbol: '<sup>maj11</sup>', notes: [0, 4, 7, 11, 14, 17] },
+			{
+				name: 'Major seventh',
 				notes: [0, 4, 7, 11],
 			},
-			minor7th: {
-				name: 'Minor Seventh',
-				symbol: 'm<sup>7</sup>',
-				notes: [0, 3, 7, 10],
+			{ name: 'Major seventh sharp eleventh', symbol: '<sup>maj7♯11</sup>', notes: [0, 4, 8, 11, 18] },
+			{
+				name: 'Major sixth',
+				symbol: '<sup>6</sup>',
+				notes: [0, 4, 7, 9],
 			},
-			minorMajor7th: {
-				name: 'Minor Major Seventh',
+			{
+				name: 'Major sixth ninth',
+				symbol: '<sup>6(9)</sup>',
+				notes: [0, 4, 7, 9, 14],
+			},
+			{ name: 'Major ninth', symbol: '<sup>maj9</sup>', notes: [0, 4, 7, 11, 14] },
+			{
+				name: 'Major thirteenth',
+				symbol: '<sup>maj13</sup>',
+				notes: [0, 4, 7, 11, 14, 18, 21],
+			},
+			{
+				name: 'Minor',
+				symbol: 'm',
+				notes: [0, 3, 7],
+			},
+			{ name: 'Minor eleventh', symbol: 'm<sup>11</sup>', notes: [0, 3, 7, 10, 14, 17] },
+			{
+				name: 'Minor major seventh',
 				symbol: 'm<sup>maj7</sup>',
 				notes: [0, 3, 7, 11],
 			},
-			dominant7thsuspended2nd: {
-				name: 'Dominant 7th Suspended 2nd',
-				symbol: '<sup>7</sup>sus2',
-				notes: [0, 2, 7, 10],
+			{ name: 'Minor ninth', symbol: 'm<sup>9</sup>', notes: [0, 3, 7, 10, 14] },
+			{
+				name: 'Minor seventh',
+				symbol: 'm<sup>7</sup>',
+				notes: [0, 3, 7, 10],
 			},
-			dominant7thsuspended4th: {
-				name: 'Dominant 7th Suspended 4th',
-				symbol: '<sup>7</sup>sus4',
-				notes: [0, 5, 7, 10],
+			{ name: 'Minor sixth', symbol: 'm<sup>6</sup>', notes: [0, 3, 7, 9] },
+			{
+				name: 'Minor sixth ninth (6/9)',
+				symbol: 'm<sup>6(9)</sup>',
+				notes: [0, 3, 7, 9, 14],
 			},
-		},
+			{ name: 'Minor thirteenth', symbol: 'm<sup>13</sup>', notes: [0, 3, 7, 10, 14, 17, 21] },
+			{
+				name: 'Ninth augmented fifth',
+				symbol: '<sup>9♯5</sup>',
+				notes: [0, 4, 8, 10, 14],
+			},
+			{ name: 'Ninth flat fifth', notes: [0, 4, 6, 10, 14], symbol: '<sup>9♭5</sup>' },
+			{
+				name: 'Seven six',
+				symbol: '<sup>7(6)</sup>',
+				notes: [0, 4, 7, 9, 10],
+			},
+			{ name: 'Seventh suspension four', symbol: '<sup>7sus4</sup>', notes: [0, 5, 7, 10] },
+			{
+				name: 'Suspended fourth',
+				symbol: '<sup>sus4</sup>',
+				notes: [0, 5, 7],
+			},
+			{
+				name: 'Suspended second',
+				symbol: '<sup>sus2</sup>',
+				notes: [0, 2, 7],
+			},
+			{
+				name: 'Thirteenth flat ninth',
+				symbol: '<sup>13♭9</sup>',
+				notes: [0, 4, 7, 10, 13, 21],
+			},
+			{
+				name: 'Thirteenth flat ninth flat fifth',
+				symbol: '<sup>13♭9(♭5)</sup>',
+				notes: [0, 4, 6, 10, 13, 21],
+			},
+		],
 		noteNameSystems: {
 			standard: {
 				name: 'Standard',

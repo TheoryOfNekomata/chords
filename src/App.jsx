@@ -102,7 +102,7 @@ const ORDINAL_SUFFIXES = {
 	few: 'rd',
 }
 
-const App = ({ chordDictionary, noteNameSystems }) => {
+const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 	const [chord, setChord] = React.useState(null)
 	const [chordName, setChordName] = React.useState(null)
 	const [inversions, setInversions] = React.useState([])
@@ -166,7 +166,7 @@ const App = ({ chordDictionary, noteNameSystems }) => {
 	}, [selectedKey, accidentalBias, hardAccidentalBias, noteNameSystems, noteNames])
 
 	React.useEffect(() => {
-		const { [chord]: theChord = null } = chordDictionary
+		const [theChord = null] = chordDictionary.filter(d => d.name === chord)
 		if (theChord !== null) {
 			const { symbol } = theChord
 			setChordName(`${noteName}${symbol}`)
@@ -174,7 +174,7 @@ const App = ({ chordDictionary, noteNameSystems }) => {
 	}, [chord, chordDictionary, noteName])
 
 	React.useEffect(() => {
-		const { [chord]: theChord = null } = chordDictionary
+		const [theChord = null] = chordDictionary.filter(d => d.name === chord)
 		if (theChord !== null) {
 			const { notes } = theChord
 			setInversions(
@@ -196,32 +196,49 @@ const App = ({ chordDictionary, noteNameSystems }) => {
 			const pitchNoteNames = notes.split(';')
 
 			setKeysOnNames(
-				keysOn.map(selectedKey => {
-					const baseKey = selectedKey % 12
+				keysOn.map(chordKey => {
+					const baseKey = chordKey % 12
 					const names = pitchNoteNames[baseKey].split(',')
 					let nameIndex = 4 - (accidentalBias + 2)
-					if (names[nameIndex].length < 1) {
-						if (names[2].length < 1) {
-							nameIndex += Math.sign(accidentalBias)
+
+					if (accidentalBias === -2) {
+						if (names[3].length > 0) {
+							nameIndex = 3
+						} else if (names[4].length > 0) {
+							nameIndex = 4
+						}
+					} else if (accidentalBias === -1) {
+						if (names[3].length > 0) {
+							nameIndex = 3
 						} else {
 							nameIndex = 2
+						}
+					} else if (accidentalBias === 1) {
+						if (names[1].length > 0) {
+							nameIndex = 1
+						} else {
+							nameIndex = 2
+						}
+					} else if (accidentalBias === 2) {
+						if (names[1].length > 0) {
+							nameIndex = 1
+						} else if (names[0].length > 0) {
+							nameIndex = 0
 						}
 					}
 					return names[nameIndex]
 				}),
 			)
 		}
-	}, [keysOn, accidentalBias, noteNameSystems, noteNames])
+	}, [keysOn, accidentalBias, noteNameSystems, noteNames, noteName, selectedKey])
 
 	React.useEffect(() => {
-		const [firstChord] = Object.keys(chordDictionary)
-		setChord(firstChord)
+		const [firstChord] = chordDictionary
+		setChord(firstChord.name)
 
 		const [firstNoteNameSystem] = Object.keys(noteNameSystems)
 		setNoteNames(firstNoteNameSystem)
 	}, [chordDictionary, noteNameSystems])
-
-	console.log(keysOnNames)
 
 	return (
 		<Container>
@@ -231,9 +248,15 @@ const App = ({ chordDictionary, noteNameSystems }) => {
 					<label>
 						<Label>Chord</Label>
 						<DropdownSelect value={chord} onChange={handleChordChange}>
-							{Object.entries(chordDictionary).map(([value, chord]) => (
-								<option key={value} value={value}>
-									{chord.name}
+							{chordDictionary.map(({ name, notes }) => (
+								<option
+									key={notes
+										.sort((a, b) => a - b)
+										.map(n => n.toString())
+										.join(',')}
+									value={name}
+								>
+									{name}
 								</option>
 							))}
 						</DropdownSelect>
