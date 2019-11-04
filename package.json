@@ -2,17 +2,21 @@
 	"name": "@theoryofnekomata/chords",
 	"version": "0.1.0",
 	"private": true,
+	"homepage" : "https://Temoto-kun.github.io/chords",
 	"dependencies": {
 		"cssremedy": "^0.1.0-beta.2",
 		"formik": "^2.0.3",
 		"react": "link:../react-musical-keyboard/node_modules/react",
 		"react-dom": "link:../react-musical-keyboard/node_modules/react-dom",
+		"react-musical-keyboard": "link:../react-musical-keyboard",
 		"react-scripts": "3.2.0",
 		"styled-components": "^4.4.1"
 	},
 	"scripts": {
 		"start": "react-scripts start",
 		"build": "react-scripts build",
+		"predeploy": "react-scripts build",
+		"deploy": "gh-pages -d build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"
 	},
@@ -32,6 +36,7 @@
 		]
 	},
 	"devDependencies": {
+		"gh-pages": "^2.1.1",
 		"husky": "^3.0.9",
 		"prettier": "^1.18.2",
 		"pretty-quick": "^2.0.0"

@@ -496,10 +496,10 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 								outline: 'none',
 							}}
 							naturalKeyStyle={pressed => ({
-								backgroundColor: pressed ? 'var(--color-primary)' : 'white',
+								backgroundColor: pressed ? 'var(--color-primary, red)' : 'var(--color-negative, white)',
 							})}
 							accidentalKeyStyle={pressed => ({
-								backgroundColor: pressed ? 'var(--color-primary)' : 'currentColor',
+								backgroundColor: pressed ? 'var(--color-primary, red)' : 'currentColor',
 							})}
 							onKeyOn={handleKeyOn}
 							keysOn={keysOn}

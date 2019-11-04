@@ -5,6 +5,8 @@
 }
 
 :root {
+	color: var(--color-positive);
+	background-color: var(--color-negative);
 	font-family: var(--font-family-base);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
