@@ -1,0 +1,53 @@
+{
+	"name": "@theoryofnekomata/chords",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"cssremedy": "^0.1.0-beta.2",
+		"formik": "^2.0.3",
+		"react": "link:../react-musical-keyboard/node_modules/react",
+		"react-dom": "link:../react-musical-keyboard/node_modules/react-dom",
+		"react-scripts": "3.2.0",
+		"styled-components": "^4.4.1"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"devDependencies": {
+		"husky": "^3.0.9",
+		"prettier": "^1.18.2",
+		"pretty-quick": "^2.0.0"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "pretty-quick --staged"
+		}
+	},
+	"prettier": {
+		"useTabs": true,
+		"endOfLine": "lf",
+		"semi": false,
+		"jsxSingleQuote": false,
+		"singleQuote": true,
+		"trailingComma": "all",
+		"printWidth": 120
+	}
+}
