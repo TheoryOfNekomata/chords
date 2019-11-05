@@ -2,6 +2,8 @@ import * as React from 'react'
 import styled from 'styled-components'
 import MusicalKeyboard from 'react-musical-keyboard'
 import WaveSoundGenerator from './services/WaveSoundGenerator'
+import getNoteName from './services/getNoteName'
+import getChordNoteNames from './services/getChordNoteNames'
 
 const Container = styled('div')({
 	width: '100%',
@@ -105,7 +107,7 @@ const ToggleButton = styled('span')({
 	placeContent: 'center',
 	whiteSpace: 'nowrap',
 	padding: '0.5rem 1rem',
-	border: '1px solid',
+	border: '2px solid',
 	font: 'inherit',
 	color: 'inherit',
 	outline: 0,
@@ -129,6 +131,7 @@ const AccidentalToggleButton = styled(ToggleButton)({
 	height: '2rem',
 	fontSize: '2rem',
 	fontWeight: 'normal',
+	lineHeight: 0,
 })
 
 const DropdownSelect = styled('select')({
@@ -138,13 +141,16 @@ const DropdownSelect = styled('select')({
 	padding: '0.5rem 1rem',
 	backgroundColor: 'transparent',
 	borderColor: 'currentColor',
+	borderWidth: 2,
 	color: 'inherit',
 	width: '100%',
 })
 
 const Label = styled('span')({
+	width: '100%',
 	textTransform: 'uppercase',
 	fontSize: '0.75rem',
+	fontWeight: 'bold',
 	'::after': {
 		content: '""',
 		display: 'block',
@@ -177,13 +183,13 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 	const [inversion, setInversion] = React.useState(0)
 	const [selectedKey, setSelectedKey] = React.useState(48)
 	const [keysOn, setKeysOn] = React.useState([])
-	const [playing, setPlaying] = React.useState(false)
 	const [keysOnNames, setKeysOnNames] = React.useState([])
 	const [noteNames, setNoteNames] = React.useState(null)
 	const [noteName, setNoteName] = React.useState(null)
 	const [accidentalBias, setAccidentalBias] = React.useState('1')
 	const [hardAccidentalBias, setHardAccidentalBias] = React.useState(true)
 	const generator = React.useRef(new WaveSoundGenerator())
+	const timeout = React.useRef(null)
 
 	const handleInversionChange = e => {
 		setInversion(Number(e.target.value))
@@ -211,74 +217,48 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 		setSelectedKey(note)
 	}
 
-	const play = () => {
-		setPlaying(true)
+	const play = (keysOn, theGenerator = null, oldKeys = []) => {
+		if (theGenerator !== null) {
+			oldKeys.forEach(k => { theGenerator.soundOff(k) })
+			window.clearTimeout(timeout.current)
+			keysOn.forEach(k => {
+				theGenerator.soundOn(k, 440 * (2 ** (1 / 12)) ** (k - 69))
+			})
+			timeout.current = window.setTimeout(() => {
+				keysOn.forEach(k => {
+					theGenerator.soundOff(k)
+				})
+				timeout.current = null
+			}, 500)
+		}
+	}
+
+	const handlePlay = () => {
+		play(keysOn, generator.current)
 	}
 
 	React.useEffect(() => {
 		const { [noteNames]: theNoteNames = null } = noteNameSystems
 		if (theNoteNames !== null) {
 			const { notes } = theNoteNames
-			const pitchNoteNames = notes.split(';')
-			const baseKey = selectedKey % 12
-			const names = pitchNoteNames[baseKey].split(',')
-			const accidentalBiasNumber = Number(accidentalBias)
-			let nameIndex = 4 - (accidentalBiasNumber + 2)
-			if (names[nameIndex].length < 1) {
-				if (accidentalBiasNumber === -2) {
-					nameIndex = 3
-				} else if (accidentalBiasNumber === 2) {
-					nameIndex = 1
-				} else if (names[2].length < 1) {
-					nameIndex += accidentalBias.startsWith('-') ? 1 : -1
-				} else {
-					nameIndex = 2
-				}
-			}
+			const theNoteName = getNoteName({
+				accidentalBias,
+				hardAccidentalBias
+			})(notes)(selectedKey)
 
-			if (
-				hardAccidentalBias &&
-				(((accidentalBiasNumber === 1 || accidentalBiasNumber === -1) && names[2].length > 0) ||
-					((accidentalBiasNumber === 2 && nameIndex === 1) || (accidentalBiasNumber === -2 && nameIndex === 3)))
-			) {
-				nameIndex = 2
-			}
-
-			if (names[nameIndex].length < 1) {
-				if (accidentalBiasNumber === -2) {
-					nameIndex = 3
-				} else if (accidentalBiasNumber === 2) {
-					nameIndex = 1
-				}
-			}
-
-			setNoteName(names[nameIndex])
+			setNoteName(theNoteName)
 		}
 	}, [selectedKey, accidentalBias, hardAccidentalBias, noteNameSystems, noteNames])
 
 	React.useEffect(() => {
 		const [theChord = null] = chordDictionary.filter(d => d.name === chord)
-		if (theChord !== null) {
+		let theChordName = ''
+		if (theChord !== null && noteName !== null) {
 			const { symbol } = theChord
-			setChordName(`${noteName}${symbol}`)
+			theChordName = `${noteName}${symbol}`
 		}
+		setChordName(theChordName)
 	}, [chord, chordDictionary, noteName])
-
-	React.useEffect(() => {
-		const { current } = generator
-		keysOn.forEach(k => {
-			if (playing) {
-				current.soundOn(k, 4, 440 * (2 ** (1 / 12)) ** (k - 69))
-			} else {
-				current.soundOff(k)
-			}
-		})
-		if (playing) {
-			setTimeout(() => {
-				setPlaying(false)
-			}, 500)
-		}
-	}, [keysOn, generator, playing])
 
 	React.useEffect(() => {
 		const [theChord = null] = chordDictionary.filter(d => d.name === chord)
@@ -292,8 +272,19 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 					return `${i}${ORDINAL_SUFFIXES[pr.select(i)]} Inversion`
 				}),
 			)
-			setKeysOn(notes.map((n, i) => (i < inversion ? selectedKey + n + 12 : selectedKey + n)))
-			setPlaying(true)
+			const { current: theGenerator = null, } = generator
+			setKeysOn(oldKeys => {
+				const newNotes = notes.map((n, i) => {
+					let notesOctaveSpan = 1
+					return (
+						i < inversion ?
+							selectedKey + n + (notesOctaveSpan * 12)
+							: selectedKey + n
+					)
+				})
+				play(newNotes, theGenerator, oldKeys)
+				return newNotes
+			})
 		}
 	}, [selectedKey, chord, inversion, chordDictionary])
 
@@ -301,52 +292,18 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 		const { [noteNames]: theNoteNames = null } = noteNameSystems
 		if (theNoteNames !== null) {
 			const { notes } = theNoteNames
-			const pitchNoteNames = notes.split(';')
-
-			setKeysOnNames(
-				keysOn.map(chordKey => {
-					const baseKey = chordKey % 12
-					const names = pitchNoteNames[baseKey].split(',')
-					const accidentalBiasNumber = Number(accidentalBias)
-					let nameIndex = 4 - (accidentalBiasNumber + 2)
-
-					if (accidentalBiasNumber === -2) {
-						if (names[3].length > 0) {
-							nameIndex = 3
-						} else if (names[4].length > 0) {
-							nameIndex = 4
-						}
-					} else if (accidentalBiasNumber === -1) {
-						if (names[3].length > 0) {
-							nameIndex = 3
-						} else {
-							nameIndex = 2
-						}
-					} else if (accidentalBiasNumber === 1) {
-						if (names[1].length > 0) {
-							nameIndex = 1
-						} else {
-							nameIndex = 2
-						}
-					} else if (accidentalBiasNumber === 2) {
-						if (names[1].length > 0) {
-							nameIndex = 1
-						} else if (names[0].length > 0) {
-							nameIndex = 0
-						}
-					}
-					return names[nameIndex]
-				}),
-			)
+			setKeysOnNames(getChordNoteNames({ accidentalBias, })(notes)(keysOn))
 		}
 	}, [keysOn, accidentalBias, noteNameSystems, noteNames, noteName, selectedKey])
 
 	React.useEffect(() => {
-		const [firstChord] = chordDictionary
+		const [firstChord] = chordDictionary.filter(c => c.name === 'Major')
 		setChord(firstChord.name)
 
 		const [firstNoteNameSystem] = Object.keys(noteNameSystems)
 		setNoteNames(firstNoteNameSystem)
+
+		setSelectedKey(60)
 	}, [chordDictionary, noteNameSystems])
 
 	React.useEffect(() => {
@@ -477,12 +434,12 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 				<NoteName>
 					<span
 						dangerouslySetInnerHTML={{
-							__html: chordName,
+							__html: chordName === null ? '' : chordName,
 						}}
 					/>
 				</NoteName>
 				<Controls>
-					<ToggleButton as="button" type="button" onClick={play}>
+					<ToggleButton as="button" type="button" onClick={handlePlay}>
 						Play Chord
 					</ToggleButton>
 				</Controls>

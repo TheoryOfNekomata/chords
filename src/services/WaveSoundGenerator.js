@@ -10,7 +10,7 @@ export default function WaveSoundGenerator() {
 		sound = soundId
 	}
 
-	this.soundOn = (id, volume, frequency) => {
+	this.soundOn = (id, frequency) => {
 		if (oscillators[id]) {
 			oscillators[id].stop()
 			delete oscillators[id]
@@ -22,7 +22,7 @@ export default function WaveSoundGenerator() {
 		oscillators[id].type = sounds[sound]
 		oscillators[id].connect(gainNode)
 		gainNode.connect(audioCtx.destination)
-		gainNode.gain.value = volume * 0.001
+		gainNode.gain.value = 0.05
 
 		oscillators[id].frequency.value = frequency
 		oscillators[id].start()

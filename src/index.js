@@ -157,7 +157,7 @@ ReactDOM.render(
 			european: {
 				name: 'European',
 				notes:
-					',H♯,C,,D𝄫;,C♯,,D♭,;C𝄪,,D,,E𝄫;,D♯,,E♭,;D𝄪,,E,F♭,;,E♯,F,,G𝄫;,F♯,,G♭,;F𝄪,,G,,A𝄫;,G♯,,A♭,;G𝄪,,A,,H𝄫;,A♯,,H♭,;A𝄪,,H,C♭,',
+					',H♯,C,,D𝄫;,C♯,,D♭,;C𝄪,,D,,E𝄫;,D♯,,E♭,;D𝄪,,E,F♭,;,E♯,F,,G𝄫;,F♯,,G♭,;F𝄪,,G,,A𝄫;,G♯,,A♭,;G𝄪,,A,,B♭;,A♯,,B,;A𝄪,,H,C♭,',
 			},
 		},
 	}),
