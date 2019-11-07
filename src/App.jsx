@@ -77,6 +77,7 @@ const KeyboardContainer = styled('div')({
 	gridArea: 'keyboard',
 	height: '10rem',
 	width: '100%',
+	cursor: 'pointer',
 	'@media (min-width: 720px)': {
 		height: '20vw',
 		width: 'auto',
