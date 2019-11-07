@@ -1,6 +1,7 @@
-export default ({ accidentalBias, hardAccidentalBias, }) => notes => selectedKey => {
+export default ({ accidentalBias, hardAccidentalBias }) => notes => selectedKey => {
 	const pitchNoteNames = notes.split(';')
 	const baseKey = selectedKey % 12
+	console.log(baseKey)
 	const names = pitchNoteNames[baseKey].split(',')
 	const accidentalBiasNumber = Number(accidentalBias)
 	let nameIndex = 4 - (accidentalBiasNumber + 2)

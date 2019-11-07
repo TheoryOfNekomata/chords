@@ -73,7 +73,7 @@ const KeyboardContainer = styled('div')({
 	position: 'fixed',
 	bottom: 0,
 	left: 0,
-	overflow: 'scroll',
+	overflow: 'auto hidden',
 	gridArea: 'keyboard',
 	height: '10rem',
 	width: '100%',
@@ -219,7 +219,9 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 
 	const play = (keysOn, theGenerator = null, oldKeys = []) => {
 		if (theGenerator !== null) {
-			oldKeys.forEach(k => { theGenerator.soundOff(k) })
+			oldKeys.forEach(k => {
+				theGenerator.soundOff(k)
+			})
 			window.clearTimeout(timeout.current)
 			keysOn.forEach(k => {
 				theGenerator.soundOn(k, 440 * (2 ** (1 / 12)) ** (k - 69))
@@ -243,7 +245,7 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 			const { notes } = theNoteNames
 			const theNoteName = getNoteName({
 				accidentalBias,
-				hardAccidentalBias
+				hardAccidentalBias,
 			})(notes)(selectedKey)
 
 			setNoteName(theNoteName)
@@ -272,15 +274,11 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 					return `${i}${ORDINAL_SUFFIXES[pr.select(i)]} Inversion`
 				}),
 			)
-			const { current: theGenerator = null, } = generator
+			const { current: theGenerator = null } = generator
 			setKeysOn(oldKeys => {
-				const newNotes = notes.map((n, i) => {
-					let notesOctaveSpan = 1
-					return (
-						i < inversion ?
-							selectedKey + n + (notesOctaveSpan * 12)
-							: selectedKey + n
-					)
+				const newNotes = notes.map((n, i, theNotes) => {
+					let notesOctaveSpan = Math.floor((theNotes[inversion] - n) / 12) + 1
+					return i < inversion ? selectedKey + n + notesOctaveSpan * 12 : selectedKey + n
 				})
 				play(newNotes, theGenerator, oldKeys)
 				return newNotes
@@ -292,7 +290,7 @@ const App = ({ chordDictionary = [], noteNameSystems = {} }) => {
 		const { [noteNames]: theNoteNames = null } = noteNameSystems
 		if (theNoteNames !== null) {
 			const { notes } = theNoteNames
-			setKeysOnNames(getChordNoteNames({ accidentalBias, })(notes)(keysOn))
+			setKeysOnNames(getChordNoteNames({ accidentalBias })(notes)(keysOn))
 		}
 	}, [keysOn, accidentalBias, noteNameSystems, noteNames, noteName, selectedKey])
 
